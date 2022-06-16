@@ -16,9 +16,9 @@ thought.route("/:id").get(getThoughtById).put(updateThought);
 thought.route("/:userId").post(addThought);
 
 // /api/thoughts/<userId>/<thoughtId>
-thought.route("/:userId/:thoughtId").put(addReaction).delete(removeThought);
+thought.route("/:userId/:thoughtId").post(addReaction).delete(removeThought);
 
 // /api/thoughts/<userId>/<thoughtId>/<reactionId>
-thought.route("/:userId/:thoughtId/:reactionId").delete(removeReaction);
+thought.route("/:thoughtId/:reactionId").delete(removeReaction);
 
 module.exports = thought;
