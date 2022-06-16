@@ -1,6 +1,7 @@
 const { Thought, User } = require("../models");
 
 const thoughtController = {
+  //get all thoughts
   getAllThoughts(req, res) {
     Thought.find({})
       .select("-__v")
@@ -11,6 +12,7 @@ const thoughtController = {
         res.sendStatus(400);
       });
   },
+  // get one thought by id
   getThoughtById({ params }, res) {
     Thought.findOne({ _id: params.id })
       // .populate({
@@ -39,7 +41,7 @@ const thoughtController = {
       })
       .catch((err) => res.status(400).json(err));
   },
-  // add thought to pizza
+  // add thought
   addThought({ params, body }, res) {
     console.log(body);
     Thought.create(body)
