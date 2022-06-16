@@ -39,7 +39,7 @@ const thoughtController = {
       })
       .catch((err) => res.status(400).json(err));
   },
-  // add thought to pizza
+  // add thought
   addThought({ params, body }, res) {
     console.log(body);
     Thought.create(body)
