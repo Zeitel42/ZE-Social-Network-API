@@ -15,10 +15,10 @@ const thoughtController = {
   // get one thought by id
   getThoughtById({ params }, res) {
     Thought.findOne({ _id: params.id })
-      // .populate({
-      //   path: "thoughts",
-      //   select: "-__v",
-      // }
+      .populate({
+        path: "reactions",
+        select: "-__v",
+      })
       .select("-__v")
       .then((dbUserData) => res.json(dbUserData))
       .catch((err) => {
@@ -34,7 +34,7 @@ const thoughtController = {
     })
       .then((dbUserData) => {
         if (!dbUserData) {
-          res.status(404).json({ message: "No user found with this id!" });
+          res.status(404).json({ message: "Sorry, thought not found!" });
           return;
         }
         res.json(dbUserData);
@@ -63,25 +63,23 @@ const thoughtController = {
   },
   // remove thought
   removeThought({ params }, res) {
-    Thought.findOneAndDelete({ _id: params.thoughtId })
-      .then((deletedThought) => {
-        if (!deletedThought) {
-          return res.status(404).json({ message: "No thought with this id!" });
-        }
-        return User.findOneAndUpdate(
-          { _id: params.userId },
-          { $pull: { thoughts: params.thoughtId } },
-          { new: true }
-        );
-      })
-      .then((dbUserData) => {
-        if (!dbUserData) {
-          res.status(404).json({ message: "No user found with this id!" });
+    Thought.findOneAndDelete({ _id: params.id })
+      .then((dbThoughtData) => {
+        if (!dbThoughtData) {
+          res.status(404).json({ message: "No thought found with this id" });
           return;
         }
-        res.json(dbUserData);
+        // update users thought array
+        User.findOneAndUpdate(
+          { username: dbThoughtData.username },
+          { $pull: { thoughts: params.id } }
+        )
+          .then(() => {
+            res.json({ message: "Successfully deleted the thought" });
+          })
+          .catch((err) => res.status(500).json(err));
       })
-      .catch((err) => res.json(err));
+      .catch((err) => res.status(500).json(err));
   },
   // add reaction to thought
   addReaction({ params, body }, res) {
